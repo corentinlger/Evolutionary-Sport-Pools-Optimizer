@@ -31,6 +31,6 @@ opt.display_map_pools_configuration(best_chromosome)
 ```
 <br/>
 
-![results_display](images\final_result_display.png)
+![results_display](images/final_result_display.png)
 
 
