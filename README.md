@@ -23,14 +23,27 @@ opt = EvoPoolOptimizer(cities_list=cities, nb_pools=6, nb_chromosomes=100)
 
 <br/>
 
-The coordinates of each city will automatically be downloaded and you will only have to start the optimization loop by following the code in the jupyter notebook. Then, you can observe the best result found with : 
+The coordinates of each city will automatically be downloaded and you will only have to start start the optimization loop as following : 
+
 
 ```python
-opt.display_map_pools_configuration(best_chromosome)
+opt.optimize(num_iterations=num_iterations, measurement_step=measurement_step)
+```
+Then you can observe the final result with this line :
 
+<br/>
+
+
+```python
+opt.display_map_pools_configuration(opt.best_chromosome)
 ```
 <br/>
 
-![results_display](images/final_result_display.png)
+![results_display](images/final_pools.png)
 
+<br/>
+
+## Note
+
+You even if the maps aren't displayed on the github file, you can find the example I used for the project in the 'volleyball_pools_optimization.ipynb' notebook.
 
