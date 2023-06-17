@@ -1,12 +1,13 @@
 import os
 import time
 import folium
+import datetime
 import numpy as np
 import pandas as pd 
 from geopy.geocoders import Nominatim
 
 
-class EvoPoolOptimizer:
+class EvoPoolOpt:
     """
     Class that implements a set of function to optimize the distribution of cities inside sport pools 
     with an simple evolutionnary algorithm using NumPy.
@@ -15,6 +16,7 @@ class EvoPoolOptimizer:
     :param nb_chromosomes: (int) number of chromosomes used in the evolutionnary algorithm
     """
     def __init__(self, cities_list, nb_pools=6, nb_chromosomes=100):
+        # Initialization attributes
         self.cities_list = cities_list
         self.cities_df = self.create_cities_df(cities_list)
         self.nb_pools = nb_pools
@@ -261,7 +263,64 @@ class EvoPoolOptimizer:
         :return population: (np.array) New population 
         """
         return np.concatenate((best_chromosomes, mutated_chromosomes), axis=0)
+    
+
+    """ Optimization functions """
+
+    def optimize(self, num_iterations=50_000, measurement_step=100):
+        """
+        Launch an optimization with the evolutionnary algorithm and returns the best population found 
+        :param num_iterations: (int) number of algorithm iterations
+        :param measurement_step: (int) measurement and plotting step of the performance
+        :return best_population: (np.array) Best population found
+        :return ordered_fitness_list: (np.array) Ordered_fitness_list of best population found
+        :return min_distance: (np.array) Evolution of min distance through time
+        """
+        nb_measures = num_iterations//measurement_step
+        measure_idx = 0
         
+        self.mean_distance = np.zeros((nb_measures,))
+        self.min_distance = np.zeros((nb_measures,))
+        self.max_distance = np.zeros((nb_measures,))
+
+        start = time.time()
+
+        # define an initial population
+        population = self.initialize_population()
+
+        for i in range(1, num_iterations+1): 
+            
+            # calculate the fitness of a population and order its chromosomes fitness by rank
+            population_distances = self.calculate_population_distance(population)
+            ordered_fitness_list = self.order_fitness_list(population_distances)
+
+            # log and plot the results every 'measurement_steps'
+            if i % measurement_step == 0:
+                mean, min, max = self.get_fitness_statistics(population)
+                self.mean_distance[measure_idx] = mean
+                self.min_distance[measure_idx] = min
+                self.max_distance[measure_idx] = max
+                measure_idx += 1 
+                print(f"\rIteration {i} statistics : mean : {mean:.2f}  min : {min:.2f}  max : {max:.2f}", end='')
+
+            # mutate chromosomes from the last population to create a new subset of the population
+            ordered_probabilities = self.calculate_parent_proba(ordered_fitness_list)
+            parents = self.select_parents(parents_probabilities=ordered_probabilities, population=population, nb_parents=80)
+            # between 2 and 10 permutations
+            num_permutations = 2 * np.random.randint(1, 5) 
+            mutated_chromosomes = self.mutate_parent_population(parents, num_permutations)
+            # select some of the best chromosomes of the last population 
+            best_chromosomes = self.select_best_chromosomes(ordered_fitness_list=ordered_fitness_list, population=population, nb_chromosomes=20)
+
+            # add the best and the mutated chromosomes to create the new population
+            population = self.create_new_population(best_chromosomes, mutated_chromosomes=mutated_chromosomes) 
+
+        best_chromosome_idx = ordered_fitness_list[0, 1]
+        self.best_chromosome = population[best_chromosome_idx]
+
+        end = time.time()
+        print(f"\nOptimization done in : {str(datetime.timedelta(seconds = end-start))}")
+
 
     """ Transformation functions """
 
