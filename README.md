@@ -1,9 +1,8 @@
 # Evolutionary Pool Optimizer
 
-This project contains a Python class called EvoPoolOptimizer that uses an evolutionary algorithm to optimize cities in sport pools by distance, using NumPy only. The class can be easily initialized with a list of cities, the number of pools wanted and the number of chromosomes per population for the genetic algorithm.
+This project contains a Python class, called EvoPoolOptimizer, that uses an evolutionary algorithm to optimize the distribution of cities inside sport poolse, using NumPy only. The class can be easily initialized with a list of city names (their GPS coordinates will automatically be downloaded), the number of pools desired and the number of chromosomes per population for the genetic algorithm.
 
-In addition, a Jupyter notebook is provided and demonstrates a real use case of the EvoPoolOptimizer class.
-
+In addition, a Jupyter notebook is provided and demonstrates a real use case of this class, on the cities of the 2022/2023 french National 3 volley-ball division.
 
 <br/>
 
@@ -42,8 +41,3 @@ opt.display_map_pools_configuration(opt.best_chromosome)
 ![results_display](final_pools.png)
 
 <br/>
-
-## Note
-
-You even if the maps aren't displayed on the github file, you can find the example I used for the project in the 'volleyball_pools_optimization.ipynb' notebook.
-
