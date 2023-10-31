@@ -1,7 +1,8 @@
 import os
 import time
-import folium
 import datetime
+
+import folium
 import numpy as np
 import pandas as pd 
 from geopy.geocoders import Nominatim
